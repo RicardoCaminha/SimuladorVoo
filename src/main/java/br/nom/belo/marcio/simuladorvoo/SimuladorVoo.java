@@ -27,6 +27,7 @@ class Aviao implements Runnable {
 
     private void decolar() {
         System.out.println(idAviao + ": esperando pista...");
+        
         String acao=idAviao + ": decolando...";
         aeroporto.esperarPistaDisponivel(acao); // Espera uma pista livre
     }
@@ -55,9 +56,19 @@ class Aeroporto implements Runnable {
     public Aeroporto(String nomeAeroporto) {
         this.nomeAeroporto = nomeAeroporto;
     }
-
+    /* Alterado por Ricardo e Rodrigo */
     public synchronized void esperarPistaDisponivel(String acao) {
-        System.out.println(acao);
+        if(temPistaDisponivel)
+        {
+            System.out.println(acao);
+            mudarEstadoPistaDisponivel();
+        }
+        else{
+            
+            mudarEstadoPistaDisponivel();
+            System.out.println(acao); 
+            
+        }
     }
 
     public synchronized void mudarEstadoPistaDisponivel() {
@@ -96,23 +107,50 @@ public final class SimuladorVoo {
         // NÃO MEXER NESSE TRECHO
         Aeroporto santosDumont = new Aeroporto("Santos Dumont");
         Thread threadAeroporto = new Thread(santosDumont);
-
+        
         // Constrói aviao e inicia sua execucao.
         // NÃO MEXER NESSE TRECHO
-        Aviao aviao14bis = new Aviao(santosDumont, "Avião 14BIS",10000);
-        Thread thread14bis = new Thread(aviao14bis);
+        /* Alterado por Ricardo e Rodrigo */
+        Aviao aviao1 = new Aviao(santosDumont, "Avião 1",5000);
+        Thread thread1 = new Thread(aviao1);
+        
+        Aviao aviao2 =  new Aviao(santosDumont, "Avião 2",8000);
+        Thread thread2= new Thread(aviao2);
+
+        
+        Aviao aviao3 = new Aviao(santosDumont, "Avião 3",12000);
+        Thread thread3 = new Thread(aviao3);
+
+        
+        Aviao aviao4 = new Aviao(santosDumont, "Avião 4",15000);
+        Thread thread4 = new Thread(aviao4);
+        
+        Aviao aviao5 = new Aviao(santosDumont, "Avião 5",18000);
+        Thread thread5 = new Thread(aviao5);
+
 
         // Inicia as threads
         threadAeroporto.start();
-        thread14bis.start();
-
+        thread1.start();
+        thread2.start();
+        thread3.start();
+        thread4.start();
+        thread5.start();
+        synchronized(threadAeroporto){
         try {
             // Junta-se ao término da execução da thread do aeroporto
-            threadAeroporto.join();
+            thread1.join();
+            thread2.join();
+            thread3.join();
+            thread4.join();
+            thread5.join();
+            threadAeroporto.stop();
+            //threadAeroporto.join();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
         System.out.println("Terminando thread principal.");
+        }
 
     }
 }
